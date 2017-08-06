@@ -8,7 +8,6 @@ import tensorflow as tf
 import pandas as pd
 import numpy as np
 from numpy import random as nr
-from sklearn.preprocessing import OneHotEncoder
 
 
 # In[2]:
@@ -42,7 +41,7 @@ def read_test_data(filename):#用于读取数据的函数
     return (images,num_sample,num_feature)
 # In[4]:
 
-train_filename='/Dataset_for_dl/input/train.csv'
+train_filename='./input/train.csv'
 (train_images,train_labels,num_train,num_feature)=read_train_data(train_filename)
 
 test_filename='/Dataset_for_dl/input/test.csv'
