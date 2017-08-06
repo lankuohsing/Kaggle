@@ -28,8 +28,8 @@ from keras.callbacks import ReduceLROnPlateau
 sns.set(style='white', context='notebook', palette='deep')
 
 # Load the data
-train = pd.read_csv("/Dataset_for_dl/input/train.csv")
-test = pd.read_csv("/Dataset_for_dl/input/test.csv")
+train = pd.read_csv("/home/gnc430/lankuohsing/MNIST_data/input/train.csv")
+test = pd.read_csv("/home/gnc430/lankuohsing/MNIST_data/input/test.csv")
 
 Y_train = train["label"]
 
