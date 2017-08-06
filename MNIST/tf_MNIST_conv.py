@@ -44,7 +44,7 @@ def read_test_data(filename):#用于读取数据的函数
 train_filename='./input/train.csv'
 (train_images,train_labels,num_train,num_feature)=read_train_data(train_filename)
 
-test_filename='/Dataset_for_dl/input/test.csv'
+test_filename='./input/test.csv'
 (test_images,num_test,num_feature)=read_test_data(test_filename)
 # In[5]:
 '''
