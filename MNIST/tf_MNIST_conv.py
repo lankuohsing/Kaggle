@@ -14,7 +14,7 @@ from numpy import random as nr
 
 #一些常量的定义
 img_size=28*28
-training_iters=100000
+training_iters=5000
 train_size=0.8
 n_hidden_1 = 256 # 1st layer number of features
 n_hidden_2 = 256 # 2nd layer number of features
@@ -195,10 +195,12 @@ test_labels_onehot=np.concatenate((test1_labels_onehot,
                                   test4_labels_onehot))
 
 results=np.argmax(test_labels_onehot, 1)
-df = pd.DataFrame(results)
-df.index.name='ImageId'
-df.index+=1
-df.columns=['Label']
-df.to_csv('./results1.csv', header=True)
+
 
 sess.close()
+# In[]
+
+results = pd.Series(results,name="Label")
+submission = pd.concat([pd.Series(range(1,len(results)+1),name = "ImageId"),results],axis = 1)
+
+submission.to_csv("./tf_MNIST_conv.csv",index=False)
