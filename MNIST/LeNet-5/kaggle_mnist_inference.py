@@ -4,7 +4,7 @@ Created on Sun Aug 20 21:12:22 2017
 
 @author: lankuohsing
 """
-#!/usr/bin/env python3
+
 # -*- coding: utf-8 -*-
 
 import tensorflow as tf
