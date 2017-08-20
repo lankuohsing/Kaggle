@@ -3,7 +3,8 @@
 Created on Tue Aug  8 19:53:52 2017
 
 @author: lankuohsing
-"""http://blog.csdn.net/blogdevteam/article/details/76092129
+http://blog.csdn.net/blogdevteam/article/details/76092129
+"""
 
 import tensorflow as tf
 
@@ -58,4 +59,16 @@ def inference(input_tensor,train,regularizer):
     with tf.name_scope('layer-pool2'):
         pool2=tf.nn.max_pool(
             relu2,ksize=[1,2,2,1],strides=[1,2,2,1],padding='SAME')
+    #将第四层池化层的输出转化为第五层全连接层的输入格式。第四层的输出为7×7×64的矩阵
+    #然而第五层全连接层需要的输入格式为向量，所以这里徐将这个7×7×64的矩阵拉直成一个向量。
+    #pool2.get_shape函数可以得到第四层输出矩阵的维度而不需要手工计算。
+    #注意因为每一层神经网络的输入输出都为一个batch矩阵，所以这里得到的维度也包含一个batch
+    #中数据的个数
+    pool_shape=pool2.get_shape().as_list()
+    #计算将矩阵拉直成向量之后的长度，这个长度就是矩阵长款及深度的乘积。
+    #注意这里pool_shape[0]为一个batch中数据的个数。
+    nodes=pool_shape[1]*pool_shape[2]*pool_shape[3]
+
+
+
 
