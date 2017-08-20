@@ -7,14 +7,15 @@ Created on Sun Aug 20 21:13:54 2017
 
 import os
 import numpy as np
-
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
-
+import kaggle_mnist_input_data
+from numpy import random as nr
 # 加载mnist_inference.py中定义的常量和前向传播的函数
 import mnist_inference
 
 # 配置神经网络的参数
+NUM_CLASS=10
 BATCH_SIZE = 100
 LEARNING_RATE_BASE = 0.01
 LEARNING_RATE_DECAY = 0.99
@@ -25,7 +26,7 @@ MOVING_AVERAGE_DECAY = 0.99
 MODEL_SAVE_PATH = "model/"
 MODEL_NAME = "model.ckpt"
 
-def train(mnist):
+def train(training_images, num_train, training_labels_onehot):
     # 定义输入输出placeholder
     # 调整输入数据placeholder的格式，输入为一个四维矩阵
     x = tf.placeholder(tf.float32, [
@@ -47,7 +48,7 @@ def train(mnist):
     cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=y, labels=tf.argmax(y_, 1))
     cross_entropy_mean = tf.reduce_mean(cross_entropy)
     loss = cross_entropy_mean + tf.add_n(tf.get_collection('losses'))
-    learning_rate = tf.train.exponential_decay(LEARNING_RATE_BASE, global_step, mnist.train.num_examples/BATCH_SIZE, LEARNING_RATE_DECAY)
+    learning_rate = tf.train.exponential_decay(LEARNING_RATE_BASE, global_step, num_train/BATCH_SIZE, LEARNING_RATE_DECAY)
     train_step = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss, global_step=global_step)
     with tf.control_dependencies([train_step, variable_averages_op]):
         train_op = tf.no_op(name='train')
@@ -58,7 +59,11 @@ def train(mnist):
         tf.global_variables_initializer().run()
         # 验证和测试的过程将会有一个独立的程序来完成
         for i in range(TRAINING_STEPS):
-            xs, ys = mnist.train.next_batch(BATCH_SIZE)
+            batch_indices=nr.choice(range(num_train),BATCH_SIZE)
+            batch_x=training_images[batch_indices,:]
+            batch_y=training_labels_onehot[batch_indices,:]
+            xs=batch_x
+            ys=batch_y
             #类似地将输入的训练数据格式调整为一个四维矩阵，并将这个调整后的数据传入sess.run过程
             reshaped_xs = np.reshape(xs, (BATCH_SIZE, mnist_inference.IMAGE_SIZE, mnist_inference.IMAGE_SIZE, mnist_inference.NUM_CHANNELS))
             _, loss_value, step = sess.run([train_op, loss, global_step], feed_dict={x: reshaped_xs, y_: ys})
@@ -72,8 +77,17 @@ def train(mnist):
 
 
 def main(argv=None):
-    mnist = input_data.read_data_sets("/tmp/data", one_hot=True)
-    train(mnist)
+    train_filename='../input/train.csv'
+    (train_images,train_labels,num_train,num_feature)=kaggle_mnist_input_data.read_train_data(train_filename)
+    #test_filename='./input/test.csv'
+    #(test_images,num_test,num_feature)=kaggle_mnist_input_data.read_test_data(test_filename)
+    #将DataFrame转化为Matrix
+    training_images=train_images.as_matrix()
+    training_labels=train_labels.as_matrix()
+    #testing_images=test_images.as_matrix()
+    training_labels_onehot=kaggle_mnist_input_data.dense_to_one_hot(training_labels,num_classes=NUM_CLASS)
+
+    train(training_images, num_train, training_labels_onehot)
 
 
 if __name__ == '__main__':
