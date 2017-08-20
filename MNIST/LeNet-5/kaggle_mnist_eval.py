@@ -4,7 +4,7 @@ Created on Sun Aug 20 21:14:36 2017
 
 @author: lankuohsing
 """
-
+import pandas as pd
 import time
 import numpy as np
 import tensorflow as tf
@@ -64,10 +64,10 @@ def evaluate(testing_images, num_test):
             time.sleep(EVAL_INTERVAL_SECS)
 
             flag=False
-        results=np.argmax(y, 1)
-        results = pd.Series(results,name="Label")
-        submission = pd.concat([pd.Series(range(1,len(results)+1),name = "ImageId"),results],axis = 1)
-        submission.to_csv("./tf_MNIST_conv.csv",index=False)
+    results=np.argmax(y, 1)
+    results = pd.Series(results,name="Label")
+    submission = pd.concat([pd.Series(range(1,len(results)+1),name = "ImageId"),results],axis = 1)
+    submission.to_csv("./tf_MNIST_conv.csv",index=False)
 
 def main(argv=None):
     #train_filename='../input/train.csv'
@@ -77,7 +77,7 @@ def main(argv=None):
     #将DataFrame转化为Matrix
     #training_images=train_images.as_matrix()
     #training_labels=train_labels.as_matrix()
-    testing_images=test_images.as_matrix().astype('float64')
+    testing_images=test_images.as_matrix().astype('float64')/255.0
     #training_labels_onehot=kaggle_mnist_input_data.dense_to_one_hot(training_labels,num_classes=NUM_CLASS)
 
 
