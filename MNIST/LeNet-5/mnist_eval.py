@@ -65,7 +65,17 @@ def evaluate(mnist):
 
 
 def main(argv=None):
-    mnist = input_data.read_data_sets("/tmp/data", one_hot=True)
+    #train_filename='../input/train.csv'
+    #(train_images,train_labels,num_train,num_feature)=kaggle_mnist_input_data.read_train_data(train_filename)
+    test_filename='../input/test.csv'
+    (test_images,num_test,num_feature)=kaggle_mnist_input_data.read_test_data(test_filename)
+    #将DataFrame转化为Matrix
+    #training_images=train_images.as_matrix()
+    #training_labels=train_labels.as_matrix()
+    testing_images=test_images.as_matrix()
+    #training_labels_onehot=kaggle_mnist_input_data.dense_to_one_hot(training_labels,num_classes=NUM_CLASS)
+
+    train(training_images, num_train, training_labels_onehot)
     evaluate(mnist)
 
 
