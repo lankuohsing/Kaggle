@@ -45,7 +45,8 @@ def train(training_images, num_train, training_labels_onehot):
     #定义损失函数、学习率、滑动平均操作以及训练过程
     variable_averages = tf.train.ExponentialMovingAverage(MOVING_AVERAGE_DECAY, global_step)
     variable_averages_op = variable_averages.apply(tf.trainable_variables())
-    cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=y, labels=tf.argmax(y_, 1))
+    cross_entropy = -tf.reduce_sum(y_*tf.log(y+1e-10))
+    #cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=y, labels=tf.argmax(y_, 1))
     cross_entropy_mean = tf.reduce_mean(cross_entropy)
     loss = cross_entropy_mean + tf.add_n(tf.get_collection('losses'))
     learning_rate = tf.train.exponential_decay(LEARNING_RATE_BASE, global_step, num_train/BATCH_SIZE, LEARNING_RATE_DECAY)
