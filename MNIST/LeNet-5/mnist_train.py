@@ -83,8 +83,8 @@ def main(argv=None):
     #test_filename='./input/test.csv'
     #(test_images,num_test,num_feature)=kaggle_mnist_input_data.read_test_data(test_filename)
     #将DataFrame转化为Matrix
-    training_images=train_images.as_matrix()
-    training_labels=train_labels.as_matrix()
+    training_images=train_images.as_matrix().astype('float64')
+    training_labels=train_labels.as_matrix().astype('float64')
     #testing_images=test_images.as_matrix()
     training_labels_onehot=kaggle_mnist_input_data.dense_to_one_hot(training_labels,num_classes=NUM_CLASS)
 
