@@ -107,7 +107,7 @@ def train(mnist):
     对应的类别编号。
 
     """
-    cross_entropy=tf.nn.sparse_softmax_cross_entropy_with_logits(y,tf.argmax(y_,1))
+    cross_entropy=tf.nn.sparse_softmax_cross_entropy_with_logits(labels=tf.argmax(y_,1), logits=y)
     cross_entropy_mean=tf.reduce_mean(cross_entropy)
 
     #计算L2正则化损失函数
