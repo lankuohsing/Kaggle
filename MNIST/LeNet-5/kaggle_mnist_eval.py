@@ -46,28 +46,26 @@ def evaluate(testing_images, num_test):
         saver = tf.train.Saver(variable_to_restore)
 
         #每隔EVAL_INTERVAL_SECS秒调用一次计算正确率的过程以检测训练过程中正确率的变化
-        flag=True
-        while flag:
-            with tf.Session() as sess:
-                # tf.train.get_checkpoint_state函数会通过checkpoint文件自动找到目录中最新模型的文件名
-                ckpt = tf.train.get_checkpoint_state(mnist_train.MODEL_SAVE_PATH)
-                if ckpt and ckpt.model_checkpoint_path:
-                    # 加载模型
-                    saver.restore(sess, ckpt.model_checkpoint_path)
-                    # 通过文件名得到模型保存时迭代的轮数
-                    #global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
-                    sess.run(y, feed_dict = validate_feed)
-                    #print("After %s training step(s), validation accuracy = %f" % (global_step, accuracy_score))
-                else:
-                    print("No checkpoint file found")
-                    return
-            time.sleep(EVAL_INTERVAL_SECS)
 
-            flag=False
-    results=np.argmax(y, 1)
-    results = pd.Series(results,name="Label")
-    submission = pd.concat([pd.Series(range(1,len(results)+1),name = "ImageId"),results],axis = 1)
-    submission.to_csv("./tf_MNIST_conv.csv",index=False)
+
+        with tf.Session() as sess:
+            # tf.train.get_checkpoint_state函数会通过checkpoint文件自动找到目录中最新模型的文件名
+            ckpt = tf.train.get_checkpoint_state(mnist_train.MODEL_SAVE_PATH)
+            if ckpt and ckpt.model_checkpoint_path:
+                # 加载模型
+                saver.restore(sess, ckpt.model_checkpoint_path)
+                # 通过文件名得到模型保存时迭代的轮数
+                #global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
+                sess.run(y, feed_dict = validate_feed)
+                return y
+                #print("After %s training step(s), validation accuracy = %f" % (global_step, accuracy_score))
+            else:
+                print("No checkpoint file found")
+                return
+
+
+
+
 
 def main(argv=None):
     #train_filename='../input/train.csv'
@@ -81,7 +79,11 @@ def main(argv=None):
     #training_labels_onehot=kaggle_mnist_input_data.dense_to_one_hot(training_labels,num_classes=NUM_CLASS)
 
 
-    evaluate(testing_images, num_test)
+    y=evaluate(testing_images, num_test)
+    results=np.argmax(y, 1)
+    results = pd.Series(results,name="Label")
+    submission = pd.concat([pd.Series(range(1,len(results)+1),name = "ImageId"),results],axis = 1)
+    submission.to_csv("./tf_MNIST_conv.csv",index=False)
 
 
 if __name__ == '__main__':
