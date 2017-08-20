@@ -23,8 +23,8 @@ MOVING_AVERAGE_DECAY = 0.99
 # In[6]:
 train_filename='../input/train.csv'
 (train_images,train_labels,num_train,num_feature)=kaggle_mnist_input_data.read_train_data(train_filename)
-training_images=train_images.as_matrix().astype('float64')
-training_labels=train_labels.as_matrix().astype('float64')
+training_images=train_images.as_matrix().astype('float64')/255.0
+training_labels=train_labels.as_matrix()
 training_labels_onehot=kaggle_mnist_input_data.dense_to_one_hot(training_labels,num_classes=NUM_CLASS)
 batch_indices=nr.choice(range(num_train),BATCH_SIZE)
 batch_x=training_images[batch_indices,:]
