@@ -12,7 +12,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 import kaggle_mnist_input_data
 from numpy import random as nr
 # 加载mnist_inference.py中定义的常量和前向传播的函数
-import mnist_inference
+import kaggle_mnist_inference
 
 # 配置神经网络的参数
 NUM_CLASS=10
@@ -31,15 +31,15 @@ def train(training_images, num_train, training_labels_onehot):
     # 调整输入数据placeholder的格式，输入为一个四维矩阵
     x = tf.placeholder(tf.float32, [
         BATCH_SIZE,                             # 第一维表示一个batch中样例的个数
-        mnist_inference.IMAGE_SIZE,             # 第二维和第三维表示图片的尺寸
-        mnist_inference.IMAGE_SIZE,
-        mnist_inference.NUM_CHANNELS],          # 第四维表示图片的深度，对于RBG格式的图片，深度为5
+        kaggle_mnist_inference.IMAGE_SIZE,             # 第二维和第三维表示图片的尺寸
+        kaggle_mnist_inference.IMAGE_SIZE,
+        kaggle_mnist_inference.NUM_CHANNELS],          # 第四维表示图片的深度，对于RBG格式的图片，深度为5
                        name='x-input')
-    y_ = tf.placeholder(tf.float32, [None, mnist_inference.OUTPUT_NODE], name='y-input')
+    y_ = tf.placeholder(tf.float32, [None, kaggle_mnist_inference.OUTPUT_NODE], name='y-input')
 
     regularizer = tf.contrib.layers.l2_regularizer(REGULARAZTION_RATE)
     # 直接使用mnist_inference.py中定义的前向传播过程
-    y = mnist_inference.inference(x, True, regularizer)
+    y = kaggle_mnist_inference.inference(x, True, regularizer)
     global_step = tf.Variable(0, trainable=False)
 
     #定义损失函数、学习率、滑动平均操作以及训练过程
@@ -66,7 +66,7 @@ def train(training_images, num_train, training_labels_onehot):
             xs=batch_x
             ys=batch_y
             #类似地将输入的训练数据格式调整为一个四维矩阵，并将这个调整后的数据传入sess.run过程
-            reshaped_xs = np.reshape(xs, (BATCH_SIZE, mnist_inference.IMAGE_SIZE, mnist_inference.IMAGE_SIZE, mnist_inference.NUM_CHANNELS))
+            reshaped_xs = np.reshape(xs, (BATCH_SIZE, kaggle_mnist_inference.IMAGE_SIZE, kaggle_mnist_inference.IMAGE_SIZE, kaggle_mnist_inference.NUM_CHANNELS))
             _, loss_value, step = sess.run([train_op, loss, global_step], feed_dict={x: reshaped_xs, y_: ys})
             #每1000轮保存一次模型。
             if i%1000 == 0:

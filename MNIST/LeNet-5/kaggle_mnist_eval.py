@@ -4,15 +4,16 @@ Created on Sun Aug 20 21:14:36 2017
 
 @author: lankuohsing
 """
+# In[]
 import pandas as pd
 import time
 import numpy as np
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 import kaggle_mnist_input_data
-# 加载mnist_inference.py 和 mnist_train.py中定义的常量和函数
-import mnist_inference
-import mnist_train
+# 加载mnist_inference.py 和 kaggle_mnist_train.py中定义的常量和函数
+import kaggle_mnist_inference
+import kaggle_mnist_train
 
 # 每10秒加载一次最新的模型， 并在测试数据上测试最新模型的正确率
 EVAL_INTERVAL_SECS = 10
@@ -23,16 +24,16 @@ def evaluate(testing_images, num_test):
         # 定义输入输出的格式
         x = tf.placeholder(tf.float32, [
             num_test,           # 第一维表示样例的个数
-            mnist_inference.IMAGE_SIZE,             # 第二维和第三维表示图片的尺寸
-            mnist_inference.IMAGE_SIZE,
-            mnist_inference.NUM_CHANNELS],          # 第四维表示图片的深度，对于RBG格式的图片，深度为5
+            kaggle_mnist_inference.IMAGE_SIZE,             # 第二维和第三维表示图片的尺寸
+            kaggle_mnist_inference.IMAGE_SIZE,
+            kaggle_mnist_inference.NUM_CHANNELS],          # 第四维表示图片的深度，对于RBG格式的图片，深度为5
                        name='x-input')
-        #y_ = tf.placeholder(tf.float32, [None, mnist_inference.OUTPUT_NODE], name='y-input')
+        #y_ = tf.placeholder(tf.float32, [None, kaggle_mnist_inference.OUTPUT_NODE], name='y-input')
 
-        validate_feed = {x: np.reshape(testing_images, (num_test, mnist_inference.IMAGE_SIZE, mnist_inference.IMAGE_SIZE, mnist_inference.NUM_CHANNELS))}
+        validate_feed = {x: np.reshape(testing_images, (num_test, kaggle_mnist_inference.IMAGE_SIZE, kaggle_mnist_inference.IMAGE_SIZE, kaggle_mnist_inference.NUM_CHANNELS))}
         # 直接通过调用封装好的函数来计算前向传播的结果。
         # 因为测试时不关注正则损失的值，所以这里用于计算正则化损失的函数被设置为None。
-        y = mnist_inference.inference(x, False, None)
+        y = kaggle_mnist_inference.inference(x, False, None)
 
         # 使用前向传播的结果计算正确率。
         # 如果需要对未知的样例进行分类，那么使用tf.argmax(y, 1)就可以得到输入样例的预测类别了。
@@ -41,7 +42,7 @@ def evaluate(testing_images, num_test):
 
         # 通过变量重命名的方式来加载模型，这样在前向传播的过程中就不需要调用求滑动平均的函数来获取平局值了。
         # 这样就可以完全共用mnist_inference.py中定义的前向传播过程
-        variable_averages = tf.train.ExponentialMovingAverage(mnist_train.MOVING_AVERAGE_DECAY)
+        variable_averages = tf.train.ExponentialMovingAverage(kaggle_mnist_train.MOVING_AVERAGE_DECAY)
         variable_to_restore = variable_averages.variables_to_restore()
         saver = tf.train.Saver(variable_to_restore)
 
@@ -50,7 +51,7 @@ def evaluate(testing_images, num_test):
 
         with tf.Session() as sess:
             # tf.train.get_checkpoint_state函数会通过checkpoint文件自动找到目录中最新模型的文件名
-            ckpt = tf.train.get_checkpoint_state(mnist_train.MODEL_SAVE_PATH)
+            ckpt = tf.train.get_checkpoint_state(kaggle_mnist_train.MODEL_SAVE_PATH)
             if ckpt and ckpt.model_checkpoint_path:
                 # 加载模型
                 saver.restore(sess, ckpt.model_checkpoint_path)
@@ -66,25 +67,22 @@ def evaluate(testing_images, num_test):
 
 
 
+# In[]
 
-def main(argv=None):
-    #train_filename='../input/train.csv'
-    #(train_images,train_labels,num_train,num_feature)=kaggle_mnist_input_data.read_train_data(train_filename)
-    test_filename='../input/test.csv'
-    (test_images,num_test,num_feature)=kaggle_mnist_input_data.read_test_data(test_filename)
-    #将DataFrame转化为Matrix
-    #training_images=train_images.as_matrix()
-    #training_labels=train_labels.as_matrix()
-    testing_images=test_images.as_matrix().astype('float64')/255.0
-    #training_labels_onehot=kaggle_mnist_input_data.dense_to_one_hot(training_labels,num_classes=NUM_CLASS)
+#train_filename='../input/train.csv'
+#(train_images,train_labels,num_train,num_feature)=kaggle_mnist_input_data.read_train_data(train_filename)
+test_filename='../input/test.csv'
+(test_images,num_test,num_feature)=kaggle_mnist_input_data.read_test_data(test_filename)
+#将DataFrame转化为Matrix
+#training_images=train_images.as_matrix()
+#training_labels=train_labels.as_matrix()
+testing_images=test_images.as_matrix().astype('float64')/255.0
+#training_labels_onehot=kaggle_mnist_input_data.dense_to_one_hot(training_labels,num_classes=NUM_CLASS)
 
+# In[]
+y=evaluate(testing_images, num_test)
+results=np.argmax(y, 1)
+results = pd.Series(results,name="Label")
+submission = pd.concat([pd.Series(range(1,len(results)+1),name = "ImageId"),results],axis = 1)
+submission.to_csv("./tf_MNIST_conv.csv",index=False)
 
-    y=evaluate(testing_images, num_test)
-    results=np.argmax(y, 1)
-    results = pd.Series(results,name="Label")
-    submission = pd.concat([pd.Series(range(1,len(results)+1),name = "ImageId"),results],axis = 1)
-    submission.to_csv("./tf_MNIST_conv.csv",index=False)
-
-
-if __name__ == '__main__':
-    tf.app.run()
