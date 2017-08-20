@@ -22,7 +22,7 @@ def evaluate(testing_images, num_test):
     with tf.Graph().as_default() as g:
         # 定义输入输出的格式
         x = tf.placeholder(tf.float32, [
-            mnist.validation.num_examples,           # 第一维表示样例的个数
+            num_test,           # 第一维表示样例的个数
             mnist_inference.IMAGE_SIZE,             # 第二维和第三维表示图片的尺寸
             mnist_inference.IMAGE_SIZE,
             mnist_inference.NUM_CHANNELS],          # 第四维表示图片的深度，对于RBG格式的图片，深度为5
