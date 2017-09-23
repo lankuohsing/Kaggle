@@ -4,9 +4,6 @@ Created on Sun Aug 20 21:12:22 2017
 
 @author: lankuohsing
 """
-
-# -*- coding: utf-8 -*-
-
 import tensorflow as tf
 
 # 定义神经网络相关的参数

@@ -4,17 +4,16 @@ Created on Sun Aug 20 21:14:36 2017
 
 @author: lankuohsing
 """
-# In[]
+# In[]:
 import pandas as pd
 import time
 import numpy as np
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 import kaggle_mnist_input_data
-# 加载mnist_inference.py 和 kaggle_mnist_train.py中定义的常量和函数
 import kaggle_mnist_inference
 import kaggle_mnist_train
-
+# In[]:
 # 每10秒加载一次最新的模型， 并在测试数据上测试最新模型的正确率
 EVAL_INTERVAL_SECS = 10
 
@@ -62,11 +61,8 @@ def evaluate(testing_images, num_test):
 
 
 
-# In[]
-
-#train_filename='../input/train.csv'
-#(train_images,train_labels,num_train,num_feature)=kaggle_mnist_input_data.read_train_data(train_filename)
-test_filename='../input/test.csv'
+# In[]:
+test_filename = '../input/test.csv'
 (test_images,num_test,num_feature)=kaggle_mnist_input_data.read_test_data(test_filename)
 #将DataFrame转化为Matrix
 #training_images=train_images.as_matrix()

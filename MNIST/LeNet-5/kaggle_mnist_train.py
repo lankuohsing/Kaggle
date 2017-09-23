@@ -4,7 +4,6 @@ Created on Sun Aug 20 21:13:54 2017
 
 @author: lankuohsing
 """
-
 import os
 import numpy as np
 import tensorflow as tf

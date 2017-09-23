@@ -34,3 +34,4 @@ mnist = input_data.read_data_sets("/tmp/data", one_hot=True)
 xs, ys = mnist.train.next_batch(BATCH_SIZE)
 
 # In[6]:
+test_filename='../input/test.csv'
