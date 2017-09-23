@@ -21,15 +21,10 @@ EVAL_INTERVAL_SECS = 10
 def evaluate(testing_images, num_test):
     with tf.Graph().as_default() as g:
         # 定义输入输出的格式
-        x = tf.placeholder(tf.float32, [
-            num_test,           # 第一维表示样例的个数
-            kaggle_mnist_inference.IMAGE_SIZE,             # 第二维和第三维表示图片的尺寸
-            kaggle_mnist_inference.IMAGE_SIZE,
-            kaggle_mnist_inference.NUM_CHANNELS],          # 第四维表示图片的深度，对于RBG格式的图片，深度为5
-                       name='x-input')
+        x = tf.placeholder(tf.float32, shape=(num_test, 28, 28, 1), name='x1-input')
         #y_ = tf.placeholder(tf.float32, [None, kaggle_mnist_inference.OUTPUT_NODE], name='y-input')
 
-        validate_feed = {x: np.reshape(testing_images, (num_test, kaggle_mnist_inference.IMAGE_SIZE, kaggle_mnist_inference.IMAGE_SIZE, kaggle_mnist_inference.NUM_CHANNELS))}
+        validate_feed = {x:np.reshape(testing_images, (num_test, 28, 28, 1))}
         # 直接通过调用封装好的函数来计算前向传播的结果。
         # 因为测试时不关注正则损失的值，所以这里用于计算正则化损失的函数被设置为None。
         y = kaggle_mnist_inference.inference(x, False, None)
@@ -56,8 +51,8 @@ def evaluate(testing_images, num_test):
                 saver.restore(sess, ckpt.model_checkpoint_path)
                 # 通过文件名得到模型保存时迭代的轮数
                 #global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
-                sess.run(y, feed_dict = validate_feed)
-                return y
+                results=sess.run(y, feed_dict = validate_feed)
+                return results
                 #print("After %s training step(s), validation accuracy = %f" % (global_step, accuracy_score))
             else:
                 print("No checkpoint file found")
@@ -72,13 +67,32 @@ test_filename = '../input/test.csv'
 #将DataFrame转化为Matrix
 #training_images=train_images.as_matrix()
 #training_labels=train_labels.as_matrix()
-testing_images=test_images.as_matrix().astype('float64')/255.0
-#training_labels_onehot=kaggle_mnist_input_data.dense_to_one_hot(training_labels,num_classes=NUM_CLASS)
-
-# In[]
-y=evaluate(testing_images, num_test)
-results=np.argmax(y, 1)
+testing_images=test_images.as_matrix().astype('float32')/255.0
+i=0
+temp0_test_images=testing_images[700*i:700*(i+1),:]
+temp0_y=evaluate(temp0_test_images, num_test/40)
+for i in range(1,40):
+    print(i)
+    temp1_test_images=testing_images[700*i:700*(i+1),:]
+    temp1_y=evaluate(temp1_test_images, num_test/40)
+    temp0_y=np.vstack((temp0_y,temp1_y))
+    
+ 
+#results=tf.sparse_to_dense(y)
+results=np.argmax(temp0_y,1)
 results = pd.Series(results,name="Label")
 submission = pd.concat([pd.Series(range(1,len(results)+1),name = "ImageId"),results],axis = 1)
 submission.to_csv("./tf_MNIST_conv.csv",index=False)
+"""
+testing_images2=testing_images[14000:28001,:]
 
+#training_labels_onehot=kaggle_mnist_input_data.dense_to_one_hot(training_labels,num_classes=NUM_CLASS)
+
+# In[]
+y2=evaluate(testing_images2, num_test/2)
+#results=tf.sparse_to_dense(y)
+results2=argmax(y2,1)
+results2 = pd.Series(results2,name="Label2")
+submission2 = pd.concat([pd.Series(range(1,len(results2)+1),name = "ImageId"),results2],axis = 1)
+submission2.to_csv("./tf_MNIST_conv2.csv",index=False)
+"""
