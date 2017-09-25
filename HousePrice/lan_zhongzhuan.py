@@ -25,7 +25,7 @@ dateTime=all_zhongzhuan_50.iloc[:,3]
 dateTimeSplit=list(map(lambda x:x.split("-"), list(dateTime)))
 # In[]
 #将日期转化为int型
-dateTimeInt=list(map(lambda x:list(map(int,x)),c))
+dateTimeInt=list(map(lambda x:list(map(int,x)),dateTimeSplit))
 # In[]
 #s=[["1","2"],["3","4"]]
 #r=list(map(lambda x:list(map(int,x)),s))
