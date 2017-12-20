@@ -37,14 +37,33 @@ dateTime_weekday=list(map(lambda x:x.weekday(),dateTime_standard))
 # In[]
 dateTime_weekday_df=pd.DataFrame(dateTime_weekday,columns=['weekday'])
 # In[]
-result1=pd.concat([all_zhongzhuan_50,dateTime_weekday_df],axis=1)
+
+# In[]
+dateTime_month=list(map(lambda x:x.month,dateTime_standard))
+dateTime_month_df=pd.DataFrame(dateTime_month,columns=['month'])
+# In[]
+
+# In[]
+dateTime_year=list(map(lambda x:x.year,dateTime_standard))
+dateTime_year_df=pd.DataFrame(dateTime_year,columns=['year'])
+# In[]
+result1=pd.concat([all_zhongzhuan_50,dateTime_weekday_df,dateTime_month_df],axis=1)
 result1.to_csv("result1.csv")
 # In[]
 
-# In[]
 
 # In[]
 
+
 # In[]
+
+
+# In[]
+
+
+# In[]
+
+
+
 
 
